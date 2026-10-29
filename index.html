@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends Hub - High Priority Notice ✉️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700;800&family=Outfit:wght@400;700;900&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * {
+            font-family: 'Hind Siliguri', 'Outfit', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #030014;
+            color: #ffffff;
+            overflow-x: hidden;
+            perspective: 1200px;
+        }
+
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-glow {
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.6), 0 0 30px rgba(217, 119, 6, 0.4);
+        }
+
+        /* 3D Envelope Container */
+        .envelope-wrapper {
+            perspective: 1200px;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            max-width: 540px;
+            height: 330px;
+            background: linear-gradient(145deg, #0d0722 0%, #170c3a 50%, #080313 100%);
+            border-radius: 28px;
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9),
+                        0 0 45px rgba(245, 158, 11, 0.25),
+                        inset 0 0 20px rgba(245, 158, 11, 0.1);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .envelope:hover {
+            transform: translateY(-10px) scale(1.02) rotateX(4deg);
+            box-shadow: 0 35px 90px rgba(245, 158, 11, 0.4),
+                        0 0 60px rgba(168, 85, 247, 0.4);
+            border-color: rgba(245, 158, 11, 0.8);
+        }
+
+        /* Envelope Top Flap */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 52%;
+            background: linear-gradient(180deg, #231252 0%, #120731 100%);
+            border-bottom: 2px solid rgba(245, 158, 11, 0.6);
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Royal Wax Seal Styling */
+        .wax-seal {
+            background: radial-gradient(circle, #fbbf24 0%, #d97706 60%, #78350f 100%);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.9), 
+                        inset 0 4px 8px rgba(255, 255, 255, 0.6);
+            transition: all 0.4s ease;
+            animation: pulseGlow 1.8s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+            100% { transform: scale(1.06); box-shadow: 0 0 40px rgba(245, 158, 11, 1), 0 0 20px rgba(255, 255, 255, 0.8); }
+        }
+
+        /* Unfolded Letter Panel Animation */
+        .letter-content {
+            opacity: 0;
+            max-height: 0;
+            transform: scale(0.88) translateY(50px);
+            overflow: hidden;
+            transition: all 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .letter-content.show {
+            opacity: 1;
+            max-height: 3000px;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Dark Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(10, 6, 26, 0.88);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95),
+                        0 0 50px rgba(245, 158, 11, 0.15);
+        }
+
+        /* Equalizer Bar Animation */
+        .eq-bar {
+            width: 3px;
+            background-color: #f59e0b;
+            animation: eqPulse 1s infinite alternate ease-in-out;
+        }
+        .eq-bar:nth-child(1) { height: 14px; animation-delay: 0.1s; }
+        .eq-bar:nth-child(2) { height: 20px; animation-delay: 0.3s; }
+        .eq-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+        .eq-bar:nth-child(4) { height: 18px; animation-delay: 0.4s; }
+
+        @keyframes eqPulse {
+            0% { transform: scaleY(0.4); }
+            100% { transform: scaleY(1.2); }
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 relative">
+
+    <!-- Canvas Background Floating Sparkles -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Top Floating Audio / Ringtone Controller -->
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-3 bg-slate-950/90 backdrop-blur-md border border-amber-500/40 px-4 py-2.5 rounded-full shadow-2xl">
+        <div id="eqBars" class="flex items-center gap-1 hidden">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+        </div>
+        <button id="musicToggle" onclick="toggleAudio()" class="flex items-center gap-2 text-xs sm:text-sm text-amber-400 font-bold focus:outline-none">
+            <i id="musicIcon" class="fa-solid fa-music text-amber-400"></i>
+            <span id="musicStatus">মিউজিক অফ 🔇</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="w-full max-w-2xl mx-auto relative z-20 my-auto py-4">
+
+        <!-- 3D ENVELOPE SECTION (Visible initially) -->
+        <div id="envelopeSection" class="envelope-wrapper flex flex-col items-center justify-center space-y-6">
+            
+            <div id="mainEnvelope" onclick="openEnvelope()" class="envelope flex flex-col justify-between p-6 sm:p-8">
+                
+                <!-- Envelope Flap -->
+                <div class="envelope-flap"></div>
+
+                <!-- Envelope Header: Sender & Recipient -->
+                <div class="flex justify-between items-start z-20 border-b border-amber-500/20 pb-4">
+                    <div class="space-y-1">
+                        <span class="text-[10px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase block">📩 প্রেরক (SENDER)</span>
+                        <div class="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                            Admin Imran
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 text-right">
+                        <span class="text-[10px] sm:text-xs font-bold tracking-widest text-cyan-400 uppercase block">📬 প্রাপক (RECIPIENT)</span>
+                        <div class="text-base sm:text-lg font-black text-white">
+                            All Members <span class="text-amber-300 block sm:inline">(Friends Hub)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wax Seal Center Button -->
+                <div class="my-auto self-center z-20 flex flex-col items-center">
+                    <div class="wax-seal w-20 h-20 sm:w-24 sm:h-24 rounded-full flex flex-col items-center justify-center text-white text-center cursor-pointer active:scale-90 transition-all">
+                        <span class="font-black text-2xl tracking-tighter text-amber-100 gold-glow">FH</span>
+                        <span class="text-[9px] font-extrabold tracking-widest uppercase text-amber-200 mt-0.5">OPEN NOTICE</span>
+                    </div>
+                </div>
+
+                <!-- Footer Hint -->
+                <div class="text-center z-20 pt-2 border-t border-amber-500/20">
+                    <p class="text-xs sm:text-sm text-amber-300 font-bold animate-pulse">
+                        ✨ চিঠির খামটি খুলতে ওপরের সোলে বা খামে ক্লিক করুন!
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- UNFOLDED LETTER SECTION (Revealed on Tap) -->
+        <div id="letterSection" class="letter-content glass-panel rounded-3xl p-5 sm:p-9 space-y-6 relative border-amber-500/40">
+            
+            <!-- Letter Header -->
+            <div class="flex items-center justify-between border-b border-amber-500/30 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-purple-600 to-indigo-600 flex items-center justify-center text-2xl sm:text-3xl text-white shadow-lg shadow-amber-500/30">
+                        👑
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black tracking-tight gold-text">FRIENDS HUB OFFICIAL</h2>
+                        <p class="text-xs sm:text-sm text-amber-300 font-semibold">এডমিন ইমরানের হুকুমনামা 📜</p>
+                    </div>
+                </div>
+                <span class="text-xs px-3 py-1.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 font-bold animate-pulse">
+                    URGENT 🚨
+                </span>
+            </div>
+
+            <!-- Main Catchy Title -->
+            <div class="text-center bg-amber-500/10 border border-amber-500/30 py-3 px-4 rounded-2xl">
+                <h3 class="text-lg sm:text-2xl font-black text-amber-300">
+                    🚨 Friends Hub-এর ঘুমন্ত সিংহদের দৃষ্টি আকর্ষণ! 🚨
+                </h3>
+            </div>
+
+            <!-- Letter Body Content -->
+            <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                <p class="font-extrabold text-amber-200 text-lg sm:text-xl">
+                    প্রিয় অলসের শিরোমণি বন্ধুগণ, 👋
+                </p>
+                <p class="text-sm sm:text-base text-gray-300">
+                    গ্রুপের বর্তমান অবস্থা দেখে মনে হচ্ছে তোরা সবাই হিমালয়ে গিয়ে ধ্যান করা শুরু করেছিস! 😴 ইমরান ভাই যদি একা একা কথা বলবে, তবে মার্জিতভাবে চ্যাটবক্সটা কেন বানানো হইলো? তোদের কি মনে হয় গ্রুপটা আমরা শোপিস হিসেবে বানিয়ে রেখেছি?! 💀
+                </p>
+
+                <!-- STATUS TRACKER CARDS -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+                    <div class="bg-slate-900/90 border border-amber-500/30 p-3.5 rounded-2xl text-center space-y-1">
+                        <span class="text-2xl">😮‍💨</span>
+                        <p class="text-xs text-amber-400 font-bold">এডমিন ইমরান</p>
+                        <p class="text-xs text-gray-300 font-semibold">একা একা হাই দিয়ে ক্লান্ত!</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-purple-500/30 p-3.5 rounded-2xl text-center space-y-1">
+                        <span class="text-2xl">👻</span>
+                        <p class="text-xs text-purple-400 font-bold">মেম্বাররা</p>
+                        <p class="text-xs text-gray-300 font-semibold">সিন করে হাওয়ায় নিখোঁজ!</p>
+                    </div>
+                    <div class="bg-slate-900/90 border border-red-500/30 p-3.5 rounded-2xl text-center space-y-1">
+                        <span class="text-2xl">💔</span>
+                        <p class="text-xs text-red-400 font-bold">Friends Hub</p>
+                        <p class="text-xs text-gray-300 font-semibold">আইসিইউ ও কোমা স্টেজে!</p>
+                    </div>
+                </div>
+
+                <!-- Rules & Guidelines Box -->
+                <div class="bg-slate-950/90 rounded-2xl p-4 sm:p-5 border-l-4 border-l-amber-500 space-y-3">
+                    <h4 class="text-base sm:text-lg font-black text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-gavel text-amber-400"></i>
+                        কঠোর পরিপত্র ও নতুন নিয়মাবলী:
+                    </h4>
+                    <ul class="space-y-2 text-xs sm:text-sm text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-400 font-bold">১.</span>
+                            <span><b>সিন করে রিপ্লাই না দেওয়া অপরাধ:</b> যে মেসেজ দেখে ইগনোর করবে, পরবর্তী দেখা হওয়ার সময় আড্ডার বিল তার! ☕💸</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-400 font-bold">২.</span>
+                            <span><b>ডেইলি ১ বার হাজিরা:</b> কাজের কথা থাকুক আর না থাকুক, প্রতিদিন এটলিস্ট একটা ফালতু মিম বা 'Hi' বলা বাধ্যতামূলক! </span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-400 font-bold">৩.</span>
+                            <span><b>Friends Hub আমাদের ভালোবাসা:</b> তোদের সবাইকে ছাড়া কিন্তু আড্ডা একদম জমে না! ❤️</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <p class="text-xs sm:text-sm text-amber-200/90 font-medium text-center pt-1">
+                    তাই অলসতা ঝেড়ে এখনই মেসেঞ্জার অন কর্ এবং 'Friends Hub'-এ ঝাপিয়ে পড়! 🔥
+                </p>
+            </div>
+
+            <!-- Interactive Action Buttons -->
+            <div class="space-y-3 pt-3 border-t border-amber-500/20">
+                <p class="text-center text-xs font-bold text-amber-400">👇 তোর মন্তব্য সিলেক্ট কর এবং শপথ নে:</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <button onclick="handleResponse('active')" class="px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5">
+                        <span>আমি এক্টিভ হব! 🔥</span>
+                    </button>
+                    <button onclick="handleResponse('adda')" class="px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all shadow-lg shadow-purple-500/20 flex items-center justify-center gap-1.5">
+                        <span>চলো আড্ডা জমাই! ☕</span>
+                    </button>
+                    <button onclick="handleResponse('daily')" class="px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5">
+                        <span>আজকে থেকে ডেইলি আড্ডা! 🚀</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sign-off Footer -->
+            <div class="flex justify-between items-end pt-2">
+                <div>
+                    <p class="text-[10px] text-gray-400">আদেশক্রমে,</p>
+                    <p class="text-2xl font-bold text-amber-400" style="font-family: 'Reenie Beanie', cursive; font-size: 2.3rem;">Admin Imran</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] font-bold text-amber-400/80 block">FRIENDS HUB FOREVER</span>
+                    <span class="text-[9px] text-gray-500">Official Notice #2026</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // WEB AUDIO SYNTHESIZER FOR RICH & SWEET MELODY
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let isAudioPlaying = false;
+        let melodyTimer = null;
+
+        function playSynthesizerNote(freq, type = 'sine', duration = 0.35, gainVal = 0.2) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(gainVal, audioCtx.currentTime + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // Cheerful Modern Ringtone Tune Notes
+        const richMelody = [
+            523.25, 659.25, 783.99, 1046.50, 880.00, 1046.50, // Melody sequence 1
+            659.25, 783.99, 880.00, 1174.66, 1046.50, 1318.51, // Melody sequence 2
+            587.33, 698.46, 880.00, 1046.50, 987.77, 1318.51  // Melody sequence 3
+        ];
+
+        function startMelody() {
+            if (isAudioPlaying) return;
+            isAudioPlaying = true;
+            document.getElementById('musicIcon').className = 'fa-solid fa-volume-high text-amber-400';
+            document.getElementById('musicStatus').innerText = 'মিউজিক অন 🎵';
+            document.getElementById('eqBars').classList.remove('hidden');
+
+            let idx = 0;
+            melodyTimer = setInterval(() => {
+                const note = richMelody[idx % richMelody.length];
+                playSynthesizerNote(note, 'triangle', 0.45, 0.22);
+                
+                // Polyphonic Chord Layer for richness
+                if (idx % 2 === 0) {
+                    playSynthesizerNote(note / 2, 'sine', 0.5, 0.12);
+                }
+                idx++;
+            }, 280);
+        }
+
+        function stopMelody() {
+            isAudioPlaying = false;
+            clearInterval(melodyTimer);
+            document.getElementById('musicIcon').className = 'fa-solid fa-volume-xmark text-red-400';
+            document.getElementById('musicStatus').innerText = 'মিউজিক অফ 🔇';
+            document.getElementById('eqBars').classList.add('hidden');
+        }
+
+        function toggleAudio() {
+            if (isAudioPlaying) {
+                stopMelody();
+            } else {
+                startMelody();
+            }
+        }
+
+        // OPEN ENVELOPE LOGIC
+        let isOpen = false;
+
+        function openEnvelope() {
+            if (isOpen) return;
+            isOpen = true;
+
+            // Start Audio
+            startMelody();
+
+            // Chime Effect
+            playSynthesizerNote(880, 'sine', 0.2, 0.3);
+            setTimeout(() => playSynthesizerNote(1318.51, 'triangle', 0.5, 0.3), 120);
+
+            // Open Envelope Animation
+            const env = document.getElementById('mainEnvelope');
+            env.classList.add('open');
+
+            setTimeout(() => {
+                document.getElementById('envelopeSection').style.display = 'none';
+                const letter = document.getElementById('letterSection');
+                letter.classList.add('show');
+
+                // Rich Confetti Blast
+                confetti({
+                    particleCount: 120,
+                    spread: 90,
+                    origin: { y: 0.6 },
+                    colors: ['#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#ffffff']
+                });
+            }, 750);
+        }
+
+        // INTERACTIVE ACTION BUTTON HANDLER
+        function handleResponse(type) {
+            playSynthesizerNote(1046.50, 'sine', 0.4, 0.3);
+
+            let message = "";
+            if (type === 'active') {
+                message = "🔥 সাবাশ শের! এবার তাড়াতাড়ি Friends Hub-এ মেসেজ দিয়ে কাঁপায় দে!";
+            } else if (type === 'adda') {
+                message = "☕ চলো আড্ডা জমাই! দ্রুত মেসেঞ্জার ওপেন কর!";
+            } else {
+                message = "🚀 প্রমিজ মিস করা যাবে না কিন্তু! প্রতিদিন আড্ডা হবে!";
+            }
+
+            // Fire Confetti Shower
+            confetti({
+                particleCount: 70,
+                spread: 70,
+                origin: { y: 0.7 },
+                colors: ['#f59e0b', '#10b981', '#6366f1']
+            });
+
+            // Display Toast Alert
+            const alertBox = document.createElement('div');
+            alertBox.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-bold px-7 py-3.5 rounded-full shadow-2xl text-center border border-white/30 text-xs sm:text-sm animate-bounce';
+            alertBox.innerText = message;
+            document.body.appendChild(alertBox);
+
+            setTimeout(() => alertBox.remove(), 4000);
+        }
+
+        // CANVAS BACKGROUND SPARKLES EFFECT
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.color = `hsla(${Math.random() * 40 + 35}, 90%, 65%, ${Math.random() * 0.6 + 0.2})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor((canvas.width * canvas.height) / 9000);
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+    </script>
+</body>
+</html>
